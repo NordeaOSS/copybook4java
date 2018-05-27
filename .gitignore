@@ -1,3 +1,6 @@
 settings.xml
+.settings/
 /.idea
 *.iml
+.project
+.classpath

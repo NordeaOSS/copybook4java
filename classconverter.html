@@ -90,10 +90,13 @@
             copybook.replace(/\*[^\n]*/g, '').match(/[\s\S]+?\.[\s\t]*\n?/g).forEach(function(line, i) {
                 // Remove comments, newlines, extra space and trim
                 line = line.replace(/\s*\*[^\n]+\n/g, '').replace(/\n/g, ' ').replace(/\s{2,}/g, ' ').replace(/^\s+/, '').replace(/\s+$/, '').toUpperCase();
-
-                if(match = line.match(/^\s*(\d+)\s+([^\s]+)((?:\s+OCCURS\s+\d+(?:\s+TO\s+\d+)?(?:\s+TIMES)?)|(?:\s+REDEFINES\s+[^\s]+))?(\s+PIC\s+[^\s]+)?(\s+DEPENDING\s+ON\s+[^\s]+(?:\s+IN\s+[^\s+]+)?)?\s*\.\s*$/i)) {
+                if (match = line.match(/^\s*(\d+)\s+(?:\'.+?\')?([^\s]+)((?:\s+OCCURS\s+\d+(?:\s+TO\s+\d+)?(?:\s+TIMES)?)|(?:\s+REDEFINES\s+[^\s]+))?(\s+PIC\s+.+?)?(\s+DEPENDING\s+ON\s+[^\s]+(?:\s+IN\s+[^\s+]+)?)?(:?\s+VALUE\s+\'(.+?)\')?\s*\.\s*$/i)) {
                     var level = parseInt(match[1]);
                     var name = match[2];
+                    var exprOccursOrRedefine = match[3];
+                    var exprPic = match[4];
+                    var exprDependingOn = match[5];
+                    var exprValue = match[6];
 
                     var current = {
                         name: name,
@@ -103,12 +106,17 @@
                         type: ''
                     };
 
-                    if (match[4] != undefined) {
-                        if(pic_match = match[4].match(/^\s*PIC\s+(S)?(X+|9+)(?:\((\d+)\))?(?:V(9+)(?:\((\d+)\))?)?\s*$/)) {
+                    if (level == 88) {
+                        // enum
+                        return;
+                    }
+
+                    if (exprPic != undefined) {
+                        if (pic_match = exprPic.match(/^\s*PIC\s+(S)?(X+|9+)(?:\((\d+)\))?(?:V(9+)(?:\((\d+)\))?)?(:?\s+SIGN LEADING SEPARATE)?\s*$/)) {
                             var signed = pic_match[1] !== undefined;
                             var main_type = pic_match[2];
                             var main_size = pic_match[3] !== undefined ? parseInt(pic_match[3]) : main_type.length;
-                            var decimal_type = pic_match[4] !== undefined ?  match[4] : "";
+                            var decimal_type = pic_match[4] !== undefined ?  exprPic : "";
                             var decimal_size = pic_match[5] != undefined ? parseInt(pic_match[5]) : decimal_type.length;
 
                             if (main_type.indexOf("X") === 0) {
@@ -125,21 +133,23 @@
                                     current['type'] = "BigInteger";
                                 }
                             }
-
+                        }
+                        else {
+                            throw "Could not parse line: " + line;
                         }
                     }
 
-                    if(match[3] != undefined) {
-                        if (occurs_match = match[3].match(/^\s*OCCURS\s+(?:(\d+)\s+TO\s+)?(\d+)(?:\s+TIMES)?\s*$/)) {
+                    if(exprOccursOrRedefine != undefined) {
+                        if (occurs_match = exprOccursOrRedefine.match(/^\s*OCCURS\s+(?:(\d+)\s+TO\s+)?(\d+)(?:\s+TIMES)?\s*$/)) {
                             current['type'] += "[]";
 
-                        } else if (redefines_match = match[3].match(/\s*REDEFINES\s+([^\s]+)\s*/)) {
+                        } else if (redefines_match = exprOccursOrRedefine.match(/\s*REDEFINES\s+([^\s]+)\s*/)) {
 
                         }
                     }
 
-                    if(match[5] != undefined) {
-                        if(depending_match = match[5].match(/^\s*DEPENDING\s+ON\s+([^\s]+)(?:\s+IN\s+([^\s]+))?\s*$/)) {
+                    if(exprDependingOn != undefined) {
+                        if(depending_match = exprDependingOn.match(/^\s*DEPENDING\s+ON\s+([^\s]+)(?:\s+IN\s+([^\s]+))?\s*$/)) {
 
                         }
                     }
@@ -160,7 +170,7 @@
                         }
                     }
                 } else {
-                    throw "Could not parse line :" + line;
+                    throw "Could not parse line: " + line;
                 }
             });
         }(str));
@@ -168,15 +178,14 @@
         // Simplify structure
         (function simplifyStructure(fields, parent, level) {
             var types = 0;
-            fields.forEach(function(field, i){
-                if(field["type"] && field["type"] !== '[]') {
+            fields.forEach(function(field, i) {
+                if (field["type"] && field["type"] !== '[]') {
                     types++;
 
                 } else if (field["fields"].length > 0) {
                     types += simplifyStructure(field["fields"], field, level + 1);
                 }
             });
-
             if(level > 0 && types < 2) {
                 fields.forEach(function(field, i) {
                     parent["name"] = parent["name"] + "." + field["name"];
@@ -190,7 +199,7 @@
         })(fields, fields, 0);
 
         // Move everything up one level when we only have one field in the root
-        if(fields.length === 1 && !fields[0].type) {
+        if (fields.length === 1 && !fields[0].type) {
             if(!rootClassName) {
                 rootClassName = toCapitalCase(toCamelCase(fields[0]["name"].replace(".", "_")));
             }
