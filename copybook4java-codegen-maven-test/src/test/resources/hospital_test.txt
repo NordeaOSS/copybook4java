@@ -49,3 +49,8 @@
   03  FACTYPE         PIC X(20).
   03  TOT-FACIL       PIC XXX.
   03  FACAVAIL        PIC XXX.
+  03  'Prefix'AUX     PIC XXX.
+
+01  SomeEvent  PIC X(10).
+  88  SomeEvent-FIRST          VALUE 'FIRST'.
+  88  SomeEvent-SECOND         VALUE 'SECOND'.
