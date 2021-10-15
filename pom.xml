@@ -13,6 +13,16 @@
         <module>copybook4java-codegen-maven-plugin</module>
         <module>copybook4java-codegen-maven-test</module>
     </modules>
+    <scm>
+        <connection>scm:git:git://github.com/openjdk/nashorn.git</connection>
+        <developerConnection>scm:git:ssh://github.com:openjdk/nashorn.git</developerConnection>
+        <url>http://github.com/openjdk/nashorn/tree/main</url>
+    </scm>
+
+    <properties>
+        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+    </properties>
 
     <build>
         <plugins>
@@ -32,6 +42,11 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.openjdk.nashorn</groupId>
+                <artifactId>nashorn-core</artifactId>
+                <version>15.2</version>
+            </dependency>
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>

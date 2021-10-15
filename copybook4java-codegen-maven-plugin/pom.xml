@@ -40,6 +40,17 @@
             </roles>
             <timezone>Europe/Copenhagen</timezone>
         </developer>
+        <developer>
+            <id>madsum</id>
+            <name>masum islam</name>
+            <email>masum.islam@consult.nordea.com</email>
+            <organization>Nordea Bank AB</organization>
+            <organizationUrl>http://www.nordea.com</organizationUrl>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>Europe/Helsinki</timezone>
+        </developer>
     </developers>
 
     <ciManagement>
@@ -173,7 +184,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
-                        <version>2.2.1</version>
+                        <version>3.2.0</version>
                         <executions>
                             <execution>
                                 <id>attach-sources</id>
@@ -223,6 +234,11 @@
             <version>1.0.3</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.openjdk.nashorn</groupId>
+            <artifactId>nashorn-core</artifactId>
+            <version>15.3</version>
+        </dependency>
         <!-- maven stuff : https://blog.sagaoftherealms.net/?p=528 , https://github.com/jcabi/jcabi-maven-plugin/blob/master/pom.xml-->
         <dependency>
             <groupId>org.apache.maven</groupId>

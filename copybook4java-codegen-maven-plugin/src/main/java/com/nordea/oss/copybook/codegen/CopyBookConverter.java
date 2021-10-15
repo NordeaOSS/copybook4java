@@ -7,7 +7,7 @@
 package com.nordea.oss.copybook.codegen;
 
 import com.nordea.oss.ByteUtils;
-import jdk.nashorn.api.scripting.ScriptObjectMirror;
+import org.openjdk.nashorn.api.scripting.ScriptObjectMirror;
 
 import javax.script.*;
 import java.io.*;
