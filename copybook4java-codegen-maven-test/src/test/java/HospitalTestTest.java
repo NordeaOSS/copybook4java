@@ -5,10 +5,9 @@
  */
 
 import mypackage.HospitalTest;
-import org.junit.Test;
 import mypackage.mypackagename.HospitalTest2;
+import org.junit.Test;
 
-import static org.junit.Assert.*;
 
 public class HospitalTestTest {
 

@@ -39,7 +39,12 @@ public class JavaSyntaxChecker {
         StandardJavaFileManager fileManager = javac.getStandardFileManager(null, null, StandardCharsets.UTF_8);
         DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
         JavaCompiler.CompilationTask task = javac.getTask(null, new InMemmoryFileManager(javac.getStandardFileManager(null, null, null)), diagnostics, null, null, stringSourceCodes);
-        task.call();
+        try {
+            task.call();
+        }catch (Exception e){
+            System.out.println("Exception: "+e.getMessage()+" Cause: "+e.getCause().toString());
+        }
+
 
         List<String> errors = new ArrayList<>();
         for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
