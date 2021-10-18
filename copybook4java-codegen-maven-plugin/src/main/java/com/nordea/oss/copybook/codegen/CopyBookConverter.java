@@ -7,7 +7,6 @@
 package com.nordea.oss.copybook.codegen;
 
 import com.nordea.oss.ByteUtils;
-import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 
 import javax.script.*;
@@ -36,8 +35,8 @@ public class CopyBookConverter {
         try {
             engine.eval(js);
         }catch (Exception e){
-            // In Java 11 nashorn throws a nonsense exception.
-            // Still, it works as expected. So ignore it.
+            // In Java 11 nashorn throws null pointer exception.
+            // Still, it works as expected. So we can ignore it.
         }
     }
 
