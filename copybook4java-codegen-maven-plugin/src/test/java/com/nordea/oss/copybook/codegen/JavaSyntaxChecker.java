@@ -38,7 +38,7 @@ public class JavaSyntaxChecker {
 
         StandardJavaFileManager fileManager = javac.getStandardFileManager(null, null, StandardCharsets.UTF_8);
         DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
-        JavaCompiler.CompilationTask task = javac.getTask(null, new InMemmoryFileManager(javac.getStandardFileManager(null, null, null)), diagnostics, null, null, stringSourceCodes);
+        JavaCompiler.CompilationTask task = javac.getTask(null, new InMemoryFileManager(fileManager), diagnostics, null, null, stringSourceCodes);
         task.call();
 
         List<String> errors = new ArrayList<>();
@@ -62,11 +62,11 @@ public class JavaSyntaxChecker {
         }
     }
 
-    private static class InMemmoryFileManager implements JavaFileManager {
+    private static class InMemoryFileManager implements JavaFileManager {
         private final StandardJavaFileManager fileManager;
         private final Map<String, ByteArrayOutputStream> buffers = new LinkedHashMap<>();
 
-        InMemmoryFileManager(StandardJavaFileManager fileManager) {
+        InMemoryFileManager(StandardJavaFileManager fileManager) {
             this.fileManager = fileManager;
         }
 
@@ -125,7 +125,7 @@ public class JavaSyntaxChecker {
             return fileManager.getFileForOutput(location, packageName, relativeName, sibling);
         }
 
-        public void flush() throws IOException {
+        public void flush() {
             // Do nothing
         }
 
@@ -136,6 +136,13 @@ public class JavaSyntaxChecker {
         public int isSupportedOption(String option) {
             return fileManager.isSupportedOption(option);
         }
-    }
 
+        public String inferModuleName(Location location) throws IOException {
+            return fileManager.inferModuleName(location);
+        }
+
+        public Iterable<Set<Location>> listLocationsForModules(Location location) throws IOException {
+            return fileManager.listLocationsForModules(location);
+        }
+    }
 }

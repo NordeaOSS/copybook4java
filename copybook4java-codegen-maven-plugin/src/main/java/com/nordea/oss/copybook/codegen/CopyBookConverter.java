@@ -7,7 +7,7 @@
 package com.nordea.oss.copybook.codegen;
 
 import com.nordea.oss.ByteUtils;
-import jdk.nashorn.api.scripting.ScriptObjectMirror;
+import org.openjdk.nashorn.api.scripting.ScriptObjectMirror;
 
 import javax.script.*;
 import java.io.*;
@@ -29,7 +29,7 @@ public class CopyBookConverter {
         InputStream inputStream = this.getClass().getResourceAsStream("classconverter.html");
         String js = extractJS(inputStream);
 
-        manager = new ScriptEngineManager(null);
+        manager = new ScriptEngineManager();
         engine = manager.getEngineByName("nashorn");
 
         if(engine == null) {
